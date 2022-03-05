@@ -53,7 +53,7 @@ pipeline:
 Or use the [PIPEFORCE CLI](https://github.com/logabit/pipeforce-cli) for this:
 
 ```
-> pi command service.deploy name=<myservice> image=us-east1-docker.pkg.dev/pipeforce/<namespace>/<yourimage> port=<port> ingress: <myservice> imagePullSecret: <value> 
+> pi command service.deploy name=<myservice> image=us-east1-docker.pkg.dev/pipeforce/<namespace>/<yourimage> port=<port> ingress=<myservice> imagePullSecret=<value> 
 ```
 
 It will be automatically downloaded and then installed + started inside your PIPEFORCE namespace. If an ingress name is
