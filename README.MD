@@ -1,6 +1,7 @@
 # pipeforce-service-template-python
 
-This repo can be used as a base template to create a new microservice in PIPEFORCE.
+This repo can be used as a base template to write a new microservice in PIPEFORCE.
+It contains a ready-to-use AMQP messaging setup with a mapping from message keys to service methods to simplify development and testing.
 
 ## Quick Start Guide
 
