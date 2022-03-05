@@ -50,7 +50,7 @@ pipeline:
       imagePullSecret: <value> 
 ```
 
-Or use the (PIPEFORCE CLI)[https://github.com/logabit/pipeforce-cli] for this:
+Or use the [PIPEFORCE CLI](https://github.com/logabit/pipeforce-cli) for this:
 
 ```
 > pi command service.deploy name=<myservice> image=us-east1-docker.pkg.dev/pipeforce/<namespace>/<yourimage> port=<port> ingress: <myservice> imagePullSecret: <value> 
