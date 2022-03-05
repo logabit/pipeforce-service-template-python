@@ -1,6 +1,7 @@
-# PIPEFORCE Microservice Template for Python
+# pipeforce-service-template-python
 
-This repo can be used as a base template to create a new microservice in PIPEFORCE.
+This repo can be used as a base template to write a new microservice in PIPEFORCE.
+It contains a ready-to-use AMQP messaging setup with a mapping from message keys to service methods to simplify development and testing.
 
 ## Quick Start Guide
 
@@ -10,12 +11,12 @@ Fork this repo to your private or public microservice repo
 
 ### Step 2
 
-Create your service modules which can for example contain your process automation logics inside the `service/` folder.
-See `service/hello.py` as an example.
+Create your service modules which can for example contain your process automation logics inside the `src/service/` folder.
+See `src/service/hello.py` as an example.
 
 ### Step 3
 
-Create a mapping from a message key to your service method in `config/routing.py`
+Create a mapping from a message key to your service method in `src/config/routing.py`
 
 In case you would like to start the microservice locally, outside of the cluster, make sure, you set these environment variables accordingly:
 
@@ -44,7 +45,7 @@ Replace `<yourimage>` by the name of your image and `<namespace>` by the name of
 ### Step 6
 
 Deploy your service into your PIPEFORCE namespace using the
-command [service.start](https://pipeforce.github.io/docs/api/commands#servicestart):
+command [service.deploy](https://pipeforce.github.io/docs/api/commands#servicedeploy) inside your online workbench:
 
 ``` 
 pipeline:  
@@ -56,12 +57,13 @@ pipeline:
       imagePullSecret: <value> 
 ```
 
+Or use the [PIPEFORCE CLI](https://github.com/logabit/pipeforce-cli) for this:
+
+```
+> pi command service.deploy name=<myservice> image=us-east1-docker.pkg.dev/pipeforce/<namespace>/<yourimage> port=<port> ingress=<myservice> imagePullSecret=<value> 
+```
+
 It will be automatically downloaded and then installed + started inside your PIPEFORCE namespace. If an ingress name is
 given, you can access the service finally under ``https://<ingressname>-<namespace>.pipeforce.dev``.
 
-Its highly recommended to automate this build and deployment processes using continous deployment toolings!
-
-## TODOs
-
-- Do allow also non/body arguments on service methods (not full signature)
-- Support decorators for service methods instead of the routings file
+**Note: Its highly recommended to automate the steps 4 - 6 using continous deployment toolings!**
