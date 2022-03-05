@@ -11,12 +11,12 @@ Fork this repo to your private or public microservice repo
 
 ### Step 2
 
-Create your service modules which can for example contain your process automation logics inside the `service/` folder.
-See `service/hello.py` as an example.
+Create your service modules which can for example contain your process automation logics inside the `src/service/` folder.
+See `src/service/hello.py` as an example.
 
 ### Step 3
 
-Create a mapping from a message key to your service method in `config/routing.py`
+Create a mapping from a message key to your service method in `src/config/routing.py`
 
 ### Step 4
 
