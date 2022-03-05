@@ -38,7 +38,7 @@ Replace `<yourimage>` by the name of your image and `<namespace>` by the name of
 ### Step 6
 
 Deploy your service into your PIPEFORCE namespace using the
-command [service.deploy](https://pipeforce.github.io/docs/api/commands#servicedeploy):
+command [service.deploy](https://pipeforce.github.io/docs/api/commands#servicedeploy) inside your online workbench:
 
 ``` 
 pipeline:  
@@ -48,6 +48,12 @@ pipeline:
       port: <port>  
       ingress: <myservice>  
       imagePullSecret: <value> 
+```
+
+Or use the (PIPEFORCE CLI)[https://github.com/logabit/pipeforce-cli] for this:
+
+```
+> pi command service.deploy name=<myservice> image=us-east1-docker.pkg.dev/pipeforce/<namespace>/<yourimage> port=<port> ingress: <myservice> imagePullSecret: <value> 
 ```
 
 It will be automatically downloaded and then installed + started inside your PIPEFORCE namespace. If an ingress name is
