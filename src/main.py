@@ -62,34 +62,11 @@ class PipeforceClient(object):
                 on_message_callback=value,
                 auto_ack=True)
 
-
-message = {
-    "pipeline":
-        [
-            {
-                "iam.authorize": {
-                    "username": "developer1",
-                    "password": "developer1pwd"
-                }
-            },
-            {
-                "log": {
-                    "message": "HELLO WORLD!"
-                }
-            },
-            {
-                "datetime": {
-                    "message": "HELLO WORLD!"
-                }
-            }
-        ]
-}
-
-print("Starting service: " + setting.service_name)
+print("Starting service: " + setting.service_name + " in namespace " + setting.namespace)
 print("Connecting to broker: " + setting.svc_host_messaging)
-client = PipeforceClient()
+pipeforce = PipeforceClient()
 print("Receiving messages...")
-client.channel.start_consuming()
+pipeforce.channel.start_consuming()
 
 # response = client.pipeline(message)
 # print(" [.] Got %r" % response)

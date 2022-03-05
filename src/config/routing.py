@@ -1,9 +1,8 @@
 #
 # Place all your route key to service mappings here.
 #
-
-from service import hello
+import service
 
 mappings = {
-    "pipeforce.webhook.weclapp.order.*": hello.greeting
+    "pipeforce.webhook.weclapp.order.*": service.hello.greeting
 }

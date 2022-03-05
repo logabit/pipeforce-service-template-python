@@ -17,6 +17,13 @@ See `service/hello.py` as an example.
 
 Create a mapping from a message key to your service method in `config/routing.py`
 
+In case you would like to start the microservice locally, outside of the cluster, make sure, you set these environment variables accordingly:
+
+- `PIPEFORCE_SERVICE` - The name of the microservice.
+- `PIPEFORCE_NAMESPACE` - The namespace, this microservice runs inside.
+
+When deploying a microservice using the `service.deploy` command, these environment variables will be provided automatically for you.
+
 ### Step 4
 
 After you're finished with development, create a Docker image of your service
@@ -53,3 +60,8 @@ It will be automatically downloaded and then installed + started inside your PIP
 given, you can access the service finally under ``https://<ingressname>-<namespace>.pipeforce.dev``.
 
 Its highly recommended to automate this build and deployment processes using continous deployment toolings!
+
+## TODOs
+
+- Do allow also non/body arguments on service methods (not full signature)
+- Support decorators for service methods instead of the routings file
