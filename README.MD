@@ -53,4 +53,4 @@ pipeline:
 It will be automatically downloaded and then installed + started inside your PIPEFORCE namespace. If an ingress name is
 given, you can access the service finally under ``https://<ingressname>-<namespace>.pipeforce.dev``.
 
-Its highly recommended to automate this build and deployment processes using continous deployment toolings!
+**Note: Its highly recommended to automate the steps 4 - 6 using continous deployment toolings!**
