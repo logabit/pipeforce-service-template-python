@@ -1,4 +1,4 @@
-# PIPEFORCE Microservice Template for Python
+# pipeforce-service-template-python
 
 This repo can be used as a base template to create a new microservice in PIPEFORCE.
 
@@ -37,7 +37,7 @@ Replace `<yourimage>` by the name of your image and `<namespace>` by the name of
 ### Step 6
 
 Deploy your service into your PIPEFORCE namespace using the
-command [service.start](https://pipeforce.github.io/docs/api/commands#servicestart):
+command [service.deploy](https://pipeforce.github.io/docs/api/commands#servicedeploy):
 
 ``` 
 pipeline:  
