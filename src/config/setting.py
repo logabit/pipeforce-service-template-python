@@ -1,5 +1,4 @@
 import os
-from service import hello
 
 # Replace this by your final microservice name
 service_name = os.environ['PIPEFORCE_SERVICE']
