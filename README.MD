@@ -1,7 +1,7 @@
 # pipeforce-service-template-python
 
-This repo can be used as a base template to write a new microservice in PIPEFORCE.
-It contains a ready-to-use AMQP messaging setup with a mapping from message keys to service methods to simplify development and testing.
+This repo can be used as a base template to write a new microservice in PIPEFORCE. It contains a ready-to-use AMQP
+messaging setup with a mapping from message keys to service methods to simplify development and testing.
 
 ## Quick Start Guide
 
@@ -11,19 +11,22 @@ Fork this repo to your private or public microservice repo
 
 ### Step 2
 
-Create your service modules which can for example contain your process automation logics inside the `src/service/` folder.
-See `src/service/hello.py` as an example.
+Create your service modules which can for example contain your process automation logics inside the `src/service/`
+folder. See `src/service/hello.py` as an example.
 
 ### Step 3
 
 Create a mapping from a message key to your service method in `src/config/routing.py`
 
-In case you would like to start the microservice locally, outside of the cluster, make sure, you set these environment variables accordingly:
+In case you would like to start the microservice locally, outside of the cluster, make sure, you set these environment
+variables accordingly:
 
 - `PIPEFORCE_SERVICE` - The name of the microservice.
 - `PIPEFORCE_NAMESPACE` - The namespace, this microservice runs inside.
+- `PIPEFORCE_MESSAGE_BROKER` - The hostname of the message broker to connect to.
 
-When deploying a microservice using the `service.deploy` command, these environment variables will be provided automatically for you.
+When deploying a microservice using the `service.deploy` command, these environment variables will be provided
+automatically for you.
 
 ### Step 4
 
@@ -67,3 +70,20 @@ It will be automatically downloaded and then installed + started inside your PIP
 given, you can access the service finally under ``https://<ingressname>-<namespace>.pipeforce.dev``.
 
 **Note: Its highly recommended to automate the steps 4 - 6 using continous deployment toolings!**
+
+## Testing
+
+Make sure you have installed all libs from requirements.txt:
+
+```
+> pip3 install -r requirements.txt
+```
+
+Place your test scripts inside `src/test` and name the files with suffix `_test.py` and all test methods with
+prefix `test_`.
+
+Execute all tests using:
+
+```
+> pytest
+```

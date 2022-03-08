@@ -1,3 +1,6 @@
+"""
+    Simulates triggering a webhook to the message queue.
+"""
 import pika
 
 connection = pika.BlockingConnection(
@@ -8,6 +11,6 @@ channel.exchange_declare(exchange='pipeforce.topic.default', exchange_type='topi
 
 # Send Webhook trigger
 channel.basic_publish(
-    exchange='pipeforce.topic.default', routing_key='pipeforce.webhook.foo.bar', body="bodyOfWebhook")
+    exchange='pipeforce.topic.default', routing_key='pipeforce.webhook.foo.hoho', body="bodyOfWebhook")
 
 connection.close()
