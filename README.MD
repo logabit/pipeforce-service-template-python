@@ -57,7 +57,7 @@ variables accordingly:
 To start the microservice locally and let it listen to messages, use this command on Mac/Linux:
 
 ```
-> export PIPEFORCE_NAMESPACE=local; export PIPEFORCE_SERVICE=myservice; export PIPEFORCE_MESSAGE_BROKER=localhost; python start-service.py
+> export PIPEFORCE_NAMESPACE=local; export PIPEFORCE_SERVICE=myservice; export PIPEFORCE_MESSAGE_BROKER=localhost; python start.py
 ```
 
 When deploying a microservice using the `service.deploy` command, these environment variables will be provided
