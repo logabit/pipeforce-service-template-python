@@ -3,7 +3,9 @@
 This repo can be used as a base template to write a new microservice in PIPEFORCE using the Python programming language. It contains a ready-to-use AMQP
 messaging setup with a mapping from message keys to service methods to simplify development and testing.
 
-## Quick Start Guide
+# Quick Start Guide
+
+## Development
 
 ### Step 1
 
@@ -45,13 +47,15 @@ variables accordingly:
 When deploying a microservice using the `service.deploy` command, these environment variables will be provided
 automatically for you.
 
-### Step 4
+## Build + Deployment
+
+### Step 1
 
 After you're finished with development, create a Docker image of your service
 
 ```docker build -t <yourimage> .```
 
-### Step 5
+### Step 2
 
 Publish your image to your PIPEFORCE image repository. For example:
 
@@ -62,7 +66,7 @@ docker push us-east1-docker.pkg.dev/pipeforce/<namespace>/<yourimage>
 
 Replace `<yourimage>` by the name of your image and `<namespace>` by the name of your PIPEFORCE namespace.
 
-### Step 6
+### Step 3
 
 Deploy your service into your PIPEFORCE namespace using the
 command [service.deploy](https://pipeforce.github.io/docs/api/commands#servicedeploy) inside your online workbench:
