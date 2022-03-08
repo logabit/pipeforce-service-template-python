@@ -1,9 +1,11 @@
 # pipeforce-service-template-python
 
-This repo can be used as a base template to write a new microservice in PIPEFORCE. It contains a ready-to-use AMQP
+This repo can be used as a base template to write a new microservice in PIPEFORCE using the Python programming language. It contains a ready-to-use AMQP
 messaging setup with a mapping from message keys to service methods to simplify development and testing.
 
-## Quick Start Guide
+# Quick Start Guide
+
+## Development
 
 ### Step 1
 
@@ -11,30 +13,71 @@ Fork this repo to your private or public microservice repo
 
 ### Step 2
 
-Create your service modules which can for example contain your process automation logics inside the `src/service/`
-folder. See `src/service/hello.py` as an example.
+Create your service classes which can for example contain your process automation logics inside the `src/service/`
+folder. See `src/service/hello.py` as an example:
+
+```python
+from pipeforce import BaseService
+
+class HelloService(BaseService):
+
+    def greeting(self, body):
+        print("GREETING CALLED. BODY: " + str(body))
+
+```
 
 ### Step 3
 
-Create a mapping from a message key to your service method in `src/config/routing.py`
+Create a mapping from a message key to your service method in `routing.py`. Example:
+
+```python
+mappings = {
+    # Maps any greeting webhook to the greeting service method
+    "pipeforce.webhook.greeting.*": "service.hello.HelloService.greeting",
+}
+```
+
+### Step 4
+
+For development you can start a local RabbitMQ broker as Docker container:
+
+```
+docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3.9-management
+```
+
+The management web ui can be accessed via http://localhost:15672/ (guest/guest)
 
 In case you would like to start the microservice locally, outside of the cluster, make sure, you set these environment
 variables accordingly:
 
-- `PIPEFORCE_SERVICE` - The name of the microservice.
-- `PIPEFORCE_NAMESPACE` - The namespace, this microservice runs inside.
-- `PIPEFORCE_MESSAGE_BROKER` - The hostname of the message broker to connect to.
+- `PIPEFORCE_SERVICE` - The name of the microservice. Can be anything when running outside of the cluster.
+- `PIPEFORCE_NAMESPACE` - The namespace, this microservice runs inside. Can be anything when running outside of the cluster.
+- `PIPEFORCE_MESSAGE_BROKER` - The hostname of the message broker to connect to. Should be usually `localhost` when running outside of the cluster.
+
+To start the microservice locally and let it listen to messages, use this command on Mac/Linux:
+
+```
+> export PIPEFORCE_NAMESPACE=local; export PIPEFORCE_SERVICE=myservice; export PIPEFORCE_MESSAGE_BROKER=localhost; python start-service.py
+```
 
 When deploying a microservice using the `service.deploy` command, these environment variables will be provided
 automatically for you.
 
-### Step 4
+In order to trigger webhooks or other messages to the broker, you can use the scripts inside the `test` folder. Example:
+
+```
+> python test/trigger_webhook.py
+```
+
+## Build + Deployment
+
+### Step 1
 
 After you're finished with development, create a Docker image of your service
 
 ```docker build -t <yourimage> .```
 
-### Step 5
+### Step 2
 
 Publish your image to your PIPEFORCE image repository. For example:
 
@@ -45,7 +88,7 @@ docker push us-east1-docker.pkg.dev/pipeforce/<namespace>/<yourimage>
 
 Replace `<yourimage>` by the name of your image and `<namespace>` by the name of your PIPEFORCE namespace.
 
-### Step 6
+### Step 3
 
 Deploy your service into your PIPEFORCE namespace using the
 command [service.deploy](https://pipeforce.github.io/docs/api/commands#servicedeploy) inside your online workbench:
@@ -80,7 +123,18 @@ Make sure you have installed all libs from requirements.txt:
 ```
 
 Place your test scripts inside `src/test` and name the files with suffix `_test.py` and all test methods with
-prefix `test_`.
+prefix `test_`. Example:
+
+```
+src/test/hello_test.py
+```
+```python
+def test_greeting:
+  # Your test goes here...
+  ...
+```
+
+Its good practise that for every service method there exists at least one test, whenever possible.
 
 Execute all tests using:
 
