@@ -37,6 +37,16 @@ mappings = {
 }
 ```
 
+### Step 4
+
+For development you can start a local RabbitMQ broker as Docker container:
+
+```
+docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3.9-management
+```
+
+The management web ui can be accessed via http://localhost:15672/ (guest/guest)
+
 In case you would like to start the microservice locally, outside of the cluster, make sure, you set these environment
 variables accordingly:
 
@@ -44,8 +54,20 @@ variables accordingly:
 - `PIPEFORCE_NAMESPACE` - The namespace, this microservice runs inside. Can be anything when running outside of the cluster.
 - `PIPEFORCE_MESSAGE_BROKER` - The hostname of the message broker to connect to. Should be usually `localhost` when running outside of the cluster.
 
+To start the microservice locally and let it listen to messages, use this command on Mac/Linux:
+
+```
+> export PIPEFORCE_NAMESPACE=local; export PIPEFORCE_SERVICE=myservice; export PIPEFORCE_MESSAGE_BROKER=localhost; python start-service.py
+```
+
 When deploying a microservice using the `service.deploy` command, these environment variables will be provided
 automatically for you.
+
+In order to trigger webhooks or other messages to the broker, you can use the scripts inside the `test` folder. Example:
+
+```
+> python test/trigger_webhook.py
+```
 
 ## Build + Deployment
 
