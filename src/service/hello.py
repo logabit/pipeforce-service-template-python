@@ -1,4 +1,4 @@
-from service.base import BaseService
+from pipeforce import BaseService
 
 
 class HelloService(BaseService):
