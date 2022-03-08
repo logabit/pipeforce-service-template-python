@@ -11,19 +11,36 @@ Fork this repo to your private or public microservice repo
 
 ### Step 2
 
-Create your service modules which can for example contain your process automation logics inside the `src/service/`
-folder. See `src/service/hello.py` as an example.
+Create your service classes which can for example contain your process automation logics inside the `src/service/`
+folder. See `src/service/hello.py` as an example:
+
+```python
+from pipeforce import BaseService
+
+class HelloService(BaseService):
+
+    def greeting(self, body):
+        print("GREETING CALLED. BODY: " + str(body))
+
+```
 
 ### Step 3
 
-Create a mapping from a message key to your service method in `src/config/routing.py`
+Create a mapping from a message key to your service method in `routing.py`. Example:
+
+```python
+mappings = {
+    # Maps any greeting webhook to the greeting service method
+    "pipeforce.webhook.greeting.*": "service.hello.HelloService.greeting",
+}
+```
 
 In case you would like to start the microservice locally, outside of the cluster, make sure, you set these environment
 variables accordingly:
 
-- `PIPEFORCE_SERVICE` - The name of the microservice.
-- `PIPEFORCE_NAMESPACE` - The namespace, this microservice runs inside.
-- `PIPEFORCE_MESSAGE_BROKER` - The hostname of the message broker to connect to.
+- `PIPEFORCE_SERVICE` - The name of the microservice. Can be anything when running outside of the cluster.
+- `PIPEFORCE_NAMESPACE` - The namespace, this microservice runs inside. Can be anything when running outside of the cluster.
+- `PIPEFORCE_MESSAGE_BROKER` - The hostname of the message broker to connect to. Should be usually `localhost` when running outside of the cluster.
 
 When deploying a microservice using the `service.deploy` command, these environment variables will be provided
 automatically for you.
