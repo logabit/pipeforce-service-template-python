@@ -97,7 +97,18 @@ Make sure you have installed all libs from requirements.txt:
 ```
 
 Place your test scripts inside `src/test` and name the files with suffix `_test.py` and all test methods with
-prefix `test_`.
+prefix `test_`. Example:
+
+```
+src/test/hello_test.py
+```
+```python
+def test_greeting:
+  # Your test goes here...
+  ...
+```
+
+Its good practise that for every service method there exists at least one test, whenever possible.
 
 Execute all tests using:
 
