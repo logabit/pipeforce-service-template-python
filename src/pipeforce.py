@@ -1,3 +1,5 @@
+import inspect
+import pkgutil
 import random
 import re
 import string
@@ -7,10 +9,9 @@ from importlib import import_module
 import pika
 
 import config
-import routing
 
 
-class Client(object):
+class Client:
     """
         Messaging client to communicate with hub and other microservices inside PIPEFORCE.
         It supports async and sync message processing.
@@ -31,6 +32,7 @@ class Client(object):
         self.correlation_id = ''.join(random.choice(string.ascii_uppercase + string.digits) for i in range(10))
         self.connection = None
         self.channel = None
+        self.mappings = None
 
     def start(self):
         """
@@ -38,6 +40,7 @@ class Client(object):
         Blocks while consuming.
         :return:
         """
+        self.mappings = self.find_event_mappings()
         self.connection = pika.BlockingConnection(pika.ConnectionParameters(host=config.svc_host_messaging))
         self.channel = self.connection.channel()
         self.setup_queues(self.channel)
@@ -46,9 +49,15 @@ class Client(object):
         self.channel.start_consuming()
 
     def stop(self):
+        """
+        Stops the client and closes any connection to the message broker.
+        :return:
+        """
         self.connection.close()
 
-    def dispatch_message(self, ch, method, props, body):
+    # Adding this to disabled config .pylintrc W0613 didnt work so adding the ignore marker here:
+    # pylint: disable=unused-argument
+    def dispatch_message(self, channel, method, props, body):
         """
         Callback which dispatches all incoming messages.
         If the client is in sync_mode, the correlation_id of the current message is checked. If it matches,
@@ -56,7 +65,7 @@ class Client(object):
         Otherwise the incoming message is forwarded to a mapped service function.
         Any receiving message during a blocking sync call which is not the response message is re-queued
         by rejecting it. So it will be delivered again.
-        :param ch:
+        :param channel:
         :param method:
         :param props:
         :param body:
@@ -68,24 +77,24 @@ class Client(object):
             if props.correlation_id == self.correlation_id:
                 self.channel.basic_ack(method.delivery_tag)
                 self.response = body
-                print("Dispatcher: Response message received: correlation_id=" + self.correlation_id +
+                print("Dispatching: Response message received: correlation_id=" + self.correlation_id +
                       ", routing_key=" + method.routing_key)
                 return
-            else:
-                # Put message back to queue since we're waiting for the response message
-                self.channel.basic_reject(method.delivery_tag)
-                print("Dispatcher: Message rejected to queue (waiting for response message): " + method.routing_key)
-                return
+
+            # Put message back to queue since we're waiting for the response message
+            self.channel.basic_reject(method.delivery_tag)
+            print("Dispatching: Message rejected to queue (waiting for response message): " + method.routing_key)
+            return
 
         # Map message to service
         found = False
-        for key, value in routing.mappings.items():
+        for key, value in self.mappings.items():
             if self.amqp_match(method.routing_key, key):
                 found = True
                 self.channel.basic_ack(method.delivery_tag)
-                print(f"Dispatcher: Message accepted:{method.routing_key} -> {key} -> {value}()")
+                print(f"Dispatching message: {method.routing_key} -> {key} -> {value}()")
 
-                class_path, method_name = value.rsplit('.', 1)
+                class_path, method_name = value.rsplit('#', 1)
                 module_path, class_name = class_path.rsplit('.', 1)
 
                 module = import_module(module_path)
@@ -97,7 +106,7 @@ class Client(object):
                 service_meth(body)  # Execute service function
 
         if not found:
-            print("Dispatcher: Warning: Incoming message did not match any service: " + method.routing_key)
+            print("Dispatching: Warning: Incoming message did not match any service: " + method.routing_key)
 
     def setup_queues(self, channel):
         """
@@ -115,7 +124,8 @@ class Client(object):
         :param channel:
         :return:
         """
-        for key, value in routing.mappings.items():
+
+        for key, value in self.mappings.items():
             print(f'Creating Binding: {key} -> {value}() ')
 
             # Set the routing rules at the broker
@@ -185,8 +195,36 @@ class Client(object):
         match = re.search(regex_string, key)
         return match is not None
 
+    def find_event_mappings(self):
+        """
+        Collects all event mappings from all service classes.
+        :return:
+        """
+        decorator_name = "event"
+        mapping = {}
 
-class BaseService(object):
+        for _, service_module, _ in pkgutil.iter_modules(['service']):
+
+            module = import_module("service." + service_module)
+
+            for name, cls in inspect.getmembers(module):
+                if not inspect.isclass(cls):
+                    continue
+
+                sourcelines = inspect.getsourcelines(cls)[0]
+
+                for i, line in enumerate(sourcelines):
+                    line = line.strip()
+                    if line.split('(')[0].strip() == '@' + decorator_name:  # leaving a bit out
+                        key = line.split('"')[1]
+                        method_line = sourcelines[i + 1]
+                        method_name = method_line.split('def')[1].split('(')[0].strip()
+                        mapping[key] = cls.__module__ + "." + cls.__name__ + "#" + method_name
+
+        return mapping
+
+
+class BaseService:
     """
         Base class for all message services. Use it like this:
 
@@ -199,3 +237,20 @@ class BaseService(object):
 
     def __init__(self, client):
         self.client: Client = client
+
+
+# pylint: disable=unused-argument
+def event(key):
+    """
+    The @event decorator.
+    :param key:
+    :return:
+    """
+
+    def decorator(func):
+        def func_wrapper(self, *args, **kwargs):
+            return func(self, *args, **kwargs)
+
+        return func_wrapper
+
+    return decorator

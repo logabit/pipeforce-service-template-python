@@ -1,5 +1,6 @@
 import os
 
+# pylint: disable=invalid-name
 """
     Default settings for this microservice. Do not change unless you know what you're doing.
 """

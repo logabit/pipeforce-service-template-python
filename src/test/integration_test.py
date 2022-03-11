@@ -1,2 +1,5 @@
 def test_integration():
-    pass
+    """
+    Runs the integration test.
+    :return:
+    """

@@ -1,3 +1,4 @@
 /.idea/
 /pipeforce-service-template-python.iml
 **/.pytest_cache/
+/venv/

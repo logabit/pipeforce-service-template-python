@@ -1,2 +1,5 @@
 pika
 pytest
+pylint
+pytest-pylint
+fastapi
