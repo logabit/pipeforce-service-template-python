@@ -1,0 +1,19 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: integrationtest
+  namespace: default
+spec:
+    template:
+      spec:
+        containers:
+          - name: integrationtest
+            image: integrationtest:1.0
+            command:
+              - someCommand1
+              - someCommand2
+            args:
+              - someArg1
+              - someArg2
+        restartPolicy: Never
+    backoffLimit: 0
