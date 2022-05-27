@@ -1,6 +1,6 @@
 # pipeforce-service-template-python
 
-This repo can be used as a base template to write a microservice in PIPEFORCE using the Python programming language. It
+This repo can be used as a base template to write a microservice (= service) in PIPEFORCE using the Python programming language. It
 contains a ready-to-use AMQP messaging setup with a mapping from message keys to service methods using the `@event`
 decorator to simplify development and testing.
 
@@ -10,7 +10,7 @@ decorator to simplify development and testing.
 
 ### Step 1
 
-Fork this repo to your private or public microservice repo and clone it to your local workstation.
+Fork or import this repo to your private or public microservice repo and clone it to your local workstation.
 
 ### Step 2
 
@@ -60,7 +60,7 @@ To start the microservice locally and let it listen to messages, use this comman
 > export PIPEFORCE_NAMESPACE=local; export PIPEFORCE_SERVICE=myservice; export PIPEFORCE_MESSAGE_BROKER=localhost; python service.py
 ```
 
-When deploying a microservice using the `service.deploy` command, these environment variables will be provided
+When deploying a microservice using the `service.start` or `service.job.start`command, these environment variables will be provided
 automatically for you.
 
 In order to trigger webhooks or other messages to the broker, you can use the scripts inside the `test` folder. Example:
@@ -71,7 +71,7 @@ In order to trigger webhooks or other messages to the broker, you can use the sc
 
 ## Build your image
 
-After you're finished with development, create a Docker image of your service
+After you're finished with development, create a Docker image of your service:
 
 ```docker build -t <yourimage> .```
 
@@ -86,6 +86,8 @@ docker push us-east1-docker.pkg.dev/pipeforce/<namespace>/<yourimage>
 ```
 
 Replace `<yourimage>` by the name of your image and `<namespace>` by the name of your PIPEFORCE namespace.
+
+**Note:** Usually this step is only possible to be executed from your CI/CD system like Jenkins or CircleCI for example, since the credentials to access the registry is usually already provided there. It's not a good practice doing it from your local workspace.
 
 ## Deploy your image as service
 
@@ -152,7 +154,7 @@ command `service.job.logs`.
 Note: Each job must have a new unique name in order to be able to refer to its logs and status later. So its good
 practice to use a counter or date tag for the job name. For example:
 
-```json
+```
 myjob-run1
 myjob-run2
 myjob-run3
@@ -276,7 +278,7 @@ pipeline:
 
 Note: Make sure, you have published your image to the registry before as explained above.
 
-Depending on how you wrote your tests, you can run them also locally with your Docker command:
+Depending on how you wrote your tests, you can run them also locally with your Docker command (outside the cluster):
 
 Example 1: Run integration tests only
 
@@ -320,6 +322,7 @@ This outputs the JUnit result xml.
 docker tag <yourimage> us-east1-docker.pkg.dev/pipeforce/<namespace>/<yourimage>
 docker push us-east1-docker.pkg.dev/pipeforce/<namespace>/<yourimage>
 ```
+This is usually done by your CI/CD tool.
 
 ##### 4. Run your test as job inside PIPEFORCE:
 
