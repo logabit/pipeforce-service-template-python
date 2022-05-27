@@ -213,7 +213,7 @@ Since Integration Test depend on the microservice to be installed, the integrati
 
 Creating an integration test is similar to writing a Unit Test:
 
-Create a new file inside the `src/test` folder but with prefix `test_integration_.py`.
+Create a new file inside the `src/test` folder but with prefix `test_integration_`.
 
 ```
 src/test/test_integration_hello.py
@@ -226,6 +226,31 @@ def test_integration_greeting():
     # Your integration test goes here...
     ...
 ```
+
+#### Performance tests
+
+A special form of an integration test is a performance test. In order to have a clear separation between relatively "
+lightweight" integration tests and "heavyweight" performance tests, you should stick to this naming schema for creating
+performance tests:
+
+Create a new file inside the `src/test` folder always with prefix `test_performance_`.
+
+```
+src/test/test_performance_hello.py
+```
+
+Any performance testing method should start with `test_peformance_`:
+
+```python
+def test_performance_greeting():
+    # Your performance test goes here...
+    ...
+```
+
+This way you can maintain the code for all kind of tests in the same repo but can select which tests to execute in which
+environment.
+
+For this, you can execute performance tests only, using the `run-tests-performance.sh` script.
 
 ### Execute the Integration Test
 
