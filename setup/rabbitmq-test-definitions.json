@@ -1,0 +1,36 @@
+{
+  "rabbit_version": "3.8.6",
+  "rabbitmq_version": "3.8.6",
+  "product_name": "RabbitMQ",
+  "product_version": "3.8.6",
+  "topic_permissions": [],
+  "parameters": [],
+  "global_parameters": [],
+  "policies": [],
+  "queues": [
+    {
+      "name": "some_test_queue",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-dead-letter-exchange": "",
+        "x-dead-letter-routing-key": "pipeforce_default_dlq",
+        "x-delivery-limit": 5,
+        "x-queue-type": "classic"
+      }
+    }
+  ],
+  "exchanges": [
+    {
+      "arguments": {},
+      "auto_delete": false,
+      "durable": true,
+      "internal": false,
+      "name": "pipeforce.default.topic",
+      "type": "topic",
+      "vhost": "/"
+    }
+  ],
+  "bindings": []
+}
