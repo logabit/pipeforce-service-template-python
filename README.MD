@@ -1,7 +1,8 @@
 # pipeforce-service-template-python
 
-This repo can be used as a base template to write a microservice (= service) in PIPEFORCE using the Python programming language. It
-contains a ready-to-use AMQP messaging setup with a mapping from message keys to service methods using the `@event`
+This repo can be used as a base template to write a microservice (= service) in PIPEFORCE using the Python programming
+language. It contains a ready-to-use AMQP messaging setup with a mapping from message keys to service methods using
+the `@event`
 decorator to simplify development and testing.
 
 # Quick Start Guide
@@ -51,17 +52,18 @@ variables accordingly:
 - `PIPEFORCE_SERVICE` - The name of the microservice. Can be anything when running outside of the cluster.
 - `PIPEFORCE_NAMESPACE` - The namespace, this microservice runs inside. Can be anything when running outside of the
   cluster.
-- `PIPEFORCE_MESSAGE_BROKER` - The hostname of the message broker to connect to. Should be usually `localhost` when
-  running outside of the cluster.
+
+See the `config.py` for more variables. Especially the variables starting with `PIPEFORCE_MESSAGING_` in order to change
+the default messaging settings.
 
 To start the microservice locally and let it listen to messages, use this command on Mac/Linux:
 
 ```
-> export PIPEFORCE_NAMESPACE=local; export PIPEFORCE_SERVICE=myservice; export PIPEFORCE_MESSAGE_BROKER=localhost; python service.py
+> export PIPEFORCE_NAMESPACE=local; export PIPEFORCE_SERVICE=myservice; python service.py
 ```
 
-When deploying a microservice using the `service.start` or `service.job.start`command, these environment variables will be provided
-automatically for you.
+When deploying a microservice using the `service.start` or `service.job.start` command, these environment variables will
+be automatically injected for you.
 
 In order to trigger webhooks or other messages to the broker, you can use the scripts inside the `test` folder. Example:
 
@@ -77,8 +79,15 @@ After you're finished with development, create a Docker image of your service:
 
 ## Publish your image to the registry
 
-Before you can use the generated image inside the cluster, you need to publish it to your PIPEFORCE image repository.
-For example:
+Before you can use the generated image inside the cluster, you need to publish it to your image repository.
+
+Note: In case you're a customer of a PIPEFORCE cloud plan, you can use the registries provided for you. Ask
+support@pipeforce.io in order to give you access to these image registries.
+
+Otherwise, you need to provide your own image registry to the cluster and set the credentials using
+the `imagePullSecret` parameter.
+
+Here is an example, how to use one of the PIPEFORCE managed image registries:
 
 ```
 docker tag <yourimage> us-east1-docker.pkg.dev/pipeforce/<namespace>/<yourimage>
@@ -87,11 +96,13 @@ docker push us-east1-docker.pkg.dev/pipeforce/<namespace>/<yourimage>
 
 Replace `<yourimage>` by the name of your image and `<namespace>` by the name of your PIPEFORCE namespace.
 
-**Note:** Usually this step is only possible to be executed from your CI/CD system like Jenkins or CircleCI for example, since the credentials to access the registry is usually already provided there. It's not a good practice doing it from your local workspace.
+**Note:** Usually this step is only possible to be executed from your CI/CD system like Jenkins or CircleCI for example,
+since the credentials to access the registry is usually already provided there. It's not a good practice doing it from
+your local workspace.
 
 ## Deploy your image as service
 
-A service in PIPEFORCE is a long running application which interacts with other services in the cluster.
+A service in PIPEFORCE is a long-running application which interacts with other services in the cluster.
 
 After your image is available in the registry, you can deploy it into PIPEFORCE as service using the
 command [service.start](https://pipeforce.github.io/docs/api/commands#servicestart) inside your online workbench:
@@ -103,17 +114,16 @@ pipeline:
       image: us-east1-docker.pkg.dev/pipeforce/<namespace>/<yourimage>
       port: <port>  
       ingress: <myservice>  
-      imagePullSecret: <value> 
 ```
 
 Or use the [PIPEFORCE CLI](https://github.com/logabit/pipeforce-cli) for this:
 
 ```
-> pi command service.start name=<myservice> image=us-east1-docker.pkg.dev/pipeforce/<namespace>/<yourimage> port=<port> ingress=<myservice> imagePullSecret=<value> 
+> pi command service.start name=<myservice> image=us-east1-docker.pkg.dev/pipeforce/<namespace>/<yourimage> port=<port> ingress=<myservice>
 ```
 
 It will be automatically downloaded and then installed + started inside your PIPEFORCE namespace. If an ingress name is
-given, you can access the service finally under ``https://<ingressname>-<namespace>.pipeforce.dev``.
+given, you can access the service finally after a while under ``https://<ingressname>-<namespace>.pipeforce|.dev|.net``.
 
 **Note: It's highly recommended automating the build and deployment steps using a CD/CI tool!**
 
@@ -132,24 +142,19 @@ pipeline:
   - service.job.start:  
       name: <myjobname>
       image: us-east1-docker.pkg.dev/pipeforce/<namespace>/<yourimage>
-      imagePullSecret: <value> 
-      wait: true
 ```
 
 Or use the [PIPEFORCE CLI](https://github.com/logabit/pipeforce-cli) for this:
 
 ```
-> pi command service.job.start name=<myjob> image=us-east1-docker.pkg.dev/pipeforce/<namespace>/<yourimage> imagePullSecret=<value> wait=true
+> pi command service.job.start name=<myjob> image=us-east1-docker.pkg.dev/pipeforce/<namespace>/<yourimage>
 ```
 
 Your job image will be automatically downloaded and then installed + started inside your PIPEFORCE namespace.
 
-If `wait:true` the command will wait until the job is finished (max. 30 min) and will return the resulting output of the
-job. No other job can be started during that time.
+You can check the status of your job using the command `service.job.status`.
 
-In case a longer running job is required, start it in async mode using `wait:false` (default) and check the finish
-status of the job using the command `service.job.status` later. You can download the output of the job using the
-command `service.job.logs`.
+You can download the final output of the job using the command `service.job.logs`.
 
 Note: Each job must have a new unique name in order to be able to refer to its logs and status later. So its good
 practice to use a counter or date tag for the job name. For example:
@@ -209,7 +214,7 @@ Adjust the linter settings in the `.pylintrc` configuration file.
 While Unit Testing tests single components of the microservice as independent as possible, an Integration Test is the
 opposite: It tests the microservice integrated into the environment.
 
-Since Integration Test depend on the microservice to be installed, the integration must also run inside the cluster.
+Since Integration Test depends on the microservice to be installed, the integration must also run inside the cluster.
 
 ### Creating an Integration Test
 
@@ -221,7 +226,7 @@ Create a new file inside the `src/test` folder but with prefix `test_integration
 src/test/test_integration_hello.py
 ```
 
-Also any single integration test method must start with prefix `test_integration_`:
+Also, any single integration test method must start with prefix `test_integration_`:
 
 ```python
 def test_integration_greeting():
@@ -231,8 +236,8 @@ def test_integration_greeting():
 
 #### Performance tests
 
-A special form of an integration test is a performance test. In order to have a clear separation between relatively "
-lightweight" integration tests and "heavyweight" performance tests, you should stick to this naming schema for creating
+A special form of an integration test is a performance test. In order to have a clear separation between relatively 
+"lightweight" integration tests and "heavyweight" performance tests, you should stick to this naming schema for creating
 performance tests:
 
 Create a new file inside the `src/test` folder always with prefix `test_performance_`.
@@ -259,7 +264,7 @@ For this, you can execute performance tests only, using the `run-tests-performan
 Since the integration test needs to run inside the microservice cluster, you have to create a container image from it
 first, deploy it to the cluster and then execute it.
 
-To do so, you can use the existing `Dockerfile` to build and deploy the image as shown above.
+To do so, you can use the provided `Dockerfile` to build and deploy the image as shown above.
 
 This creates a new image and adds the `run-*.sh` scripts to it, so they can be used as entrypoints to execute the tests.
 
@@ -273,7 +278,6 @@ pipeline:
       name: myintegrationtest-run1
       image: pipeforce-registry/myintegrationtest
       command: "./run-tests-integration.sh"
-      wait: true
 ```
 
 Note: Make sure, you have published your image to the registry before as explained above.
@@ -311,7 +315,7 @@ docker build -t <yourimage> .
 ##### 2. Run your tests inside the docker image (optional and if possible)
 
 ```
-docker run <yourimage> ./run-tests-**.sh
+docker run <yourimage> ./run-tests-<type_of_test>.sh
 ```
 
 This outputs the JUnit result xml.
@@ -322,6 +326,7 @@ This outputs the JUnit result xml.
 docker tag <yourimage> us-east1-docker.pkg.dev/pipeforce/<namespace>/<yourimage>
 docker push us-east1-docker.pkg.dev/pipeforce/<namespace>/<yourimage>
 ```
+
 This is usually done by your CI/CD tool.
 
 ##### 4. Run your test as job inside PIPEFORCE:
@@ -332,7 +337,6 @@ pipeline:
       name: myintegrationtest-run1
       image: pipeforce-registry/myintegrationtest
       command: "./run-tests-integration.sh"
-      wait: true
 ```
 
 Note the `pipeforce-registry/` prefix in order to indicate to load the image from your PIPEFORCE registry. It's a
