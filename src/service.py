@@ -1,4 +1,4 @@
-from pipeforce import Client
+from pipeforce import PipeforceClient
 
-pipeforce = Client()
-pipeforce.start()
+pipeforce = PipeforceClient()
+pipeforce.start_consuming()

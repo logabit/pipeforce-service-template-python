@@ -1,3 +1,3 @@
 #!/bin/bash
 
-python3 -u src/start.py
+python3 -u src/service.py
