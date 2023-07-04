@@ -1,9 +1,12 @@
 # pipeforce-service-template-python
 
-This repo can be used as a base template to write a microservice (= service) in PIPEFORCE using the Python programming
-language. It contains a ready-to-use AMQP messaging setup with a mapping from message keys to service methods using
-the `@event`
-decorator to simplify development and testing.
+This repo contains a base template to write a microservice (= service) in PIPEFORCE using the Python programming
+language. It contains:
+
+    - A ready-to-use AMQP messaging setup with a mapping from message keys to service methods using the `@event` decorator to simplify development and testing.
+    - A ready-to-use distributed tracing setup so incoming and outgouing HTTP requests and messages can be traced and monitored.
+    - A ready-to-use REST endpoint using FAST API
+    - A ready-to-use setup for Unit and Integrationtesting
 
 # Quick Start Guide
 
