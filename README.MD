@@ -3,10 +3,13 @@
 This repo contains a base template to write a microservice (= service) in PIPEFORCE using the Python programming
 language. It contains:
 
-    - A ready-to-use AMQP messaging setup with a mapping from message keys to service methods using the `@event` decorator to simplify development and testing.
-    - A ready-to-use distributed tracing setup so incoming and outgouing HTTP requests and messages can be traced and monitored.
-    - A ready-to-use REST endpoint using FAST API
-    - A ready-to-use setup for Unit and Integrationtesting
+ - A ready-to-use AMQP messaging setup with a mapping from message keys to service methods using the `@event` decorator to simplify development and testing.
+ - A ready-to-use distributed tracing setup so incoming and outgouing HTTP requests and messages will be traced and monitored automatically.
+ - A ready-to-use REST endpoint framework using FAST API.
+ - A ready-to-use setup for Unit and Integrationtesting.
+ - A ready-to-use setup in order to communicate with the PIPEFORCE hub and pipelines.
+
+This way there is a standard process to quickly get started with developing and deploying new microservices.
 
 # Quick Start Guide
 
